@@ -4,15 +4,27 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useAppStore } from "@/stores/app";
 
 export default defineComponent({
   name: "SingleTile",
-  data: () => ({
-    opacity: 1,
-  }),
+  props: {
+    i: Number,
+    j: Number,
+  },
+  setup() {
+    const store = useAppStore();
+    return { store };
+  },
+  computed: {
+    opacity() {
+      return this.store.getTile(this.i, this.j);
+    },
+  },
+  data: () => ({}),
   methods: {
     activate() {
-      this.opacity = 0;
+      this.store.openTile(this.i, this.j);
     },
   },
 });

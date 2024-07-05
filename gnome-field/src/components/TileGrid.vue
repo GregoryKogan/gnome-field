@@ -1,7 +1,7 @@
 <template>
   <div class="tile-grid">
     <div v-for="i in width * height" :key="i">
-      <SingleTile />
+      <SingleTile :i="Math.floor((i - 1) / width)" :j="(i - 1) % width" />
     </div>
   </div>
 </template>

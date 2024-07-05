@@ -6,6 +6,21 @@
   </v-app>
 </template>
 
-<script setup>
-  //
+<script>
+import { defineComponent } from "vue";
+import { useAppStore } from "@/stores/app";
+
+export default defineComponent({
+  name: "DefaultLayout",
+  setup() {
+    const store = useAppStore();
+    return { store };
+  },
+  mounted() {
+    this.store.loadMap();
+    if (!this.store.loggedIn) {
+      this.$router.push("/");
+    }
+  },
+});
 </script>

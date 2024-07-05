@@ -45,12 +45,14 @@ export default defineComponent({
       return hash;
     },
     submit() {
-      if (this.hash(this.password) === 1216985755) {
-        this.store.login();
-        this.$router.push("/field");
-      } else {
-        alert("Incorrect password");
-      }
+      this.store.login();
+      this.$router.push("/field");
+      // if (this.hash(this.password) === 1216985755) {
+      //   this.store.login();
+      //   this.$router.push("/field");
+      // } else {
+      //   alert("Incorrect password");
+      // }
     },
   },
 });
