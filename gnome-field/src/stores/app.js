@@ -26,23 +26,29 @@ export const useAppStore = defineStore("app", {
       } catch (error) {
         console.error("Error loading the map:", error);
       }
+      this.openEntrance();
     },
     getTile(i, j) {
       return this.field[i * 32 + j];
     },
     openTile(i, j) {
-      if (this.field[i * 32 + j] === 0) return;
+      if (this.field[i * 32 + j] == 0) return;
       this.field[i * 32 + j] = 0;
-      if (this.map[i * 32 + j] === 0) this.splashOpen(i, j);
+      if (this.map[i * 32 + j] == 0) this.splashOpen(i, j);
     },
     splashOpen(i, j) {
+      if (this.map[i * 32 + j] > 0) return;
       this.openTile(i, j);
-      if (this.map[i * 32 + j] === 1) return;
 
-      if (i > 0 && this.getTile(i - 1, j) === 1) this.splashOpen(i - 1, j);
-      if (i < 23 && this.getTile(i + 1, j) === 1) this.splashOpen(i + 1, j);
-      if (j > 0 && this.getTile(i, j - 1) === 1) this.splashOpen(i, j - 1);
-      if (j < 31 && this.getTile(i, j + 1) === 1) this.splashOpen(i, j + 1);
+      if (i > 0 && this.getTile(i - 1, j) == 1) this.splashOpen(i - 1, j);
+      if (i < 23 && this.getTile(i + 1, j) == 1) this.splashOpen(i + 1, j);
+      if (j > 0 && this.getTile(i, j - 1) == 1) this.splashOpen(i, j - 1);
+      if (j < 31 && this.getTile(i, j + 1) == 1) this.splashOpen(i, j + 1);
+    },
+    openEntrance() {
+      for (let i = 0; i < 24 * 32; i++) {
+        if (this.map[i] == 2) this.openTile(Math.floor(i / 32), i % 32);
+      }
     },
   },
 });
