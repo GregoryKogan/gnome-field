@@ -1,6 +1,18 @@
 // Utilities
 import { defineStore } from "pinia";
 
+export const MapTiles = {
+  Water: 0,
+  Stone: 1,
+  Entrance: 2,
+};
+
+export const TileStates = {
+  Closed: 1,
+  Revealed: 0.5,
+  Opened: 0,
+};
+
 export const useAppStore = defineStore("app", {
   state: () => ({
     loggedIn: false,
@@ -29,33 +41,37 @@ export const useAppStore = defineStore("app", {
       this.openEntrance();
     },
     getTile(i, j) {
-      if (i < 0 || i >= 24 || j < 0 || j >= 32) return 1;
+      if (i < 0 || i >= 24 || j < 0 || j >= 32) return TileStates.Closed;
       return this.field[i * 32 + j];
     },
     openTile(i, j) {
-      if (this.field[i * 32 + j] == 0) return;
+      if (this.field[i * 32 + j] == TileStates.Opened) return;
       if (
-        this.getTile(i - 1, j) == 0 ||
-        this.getTile(i + 1, j) == 0 ||
-        this.getTile(i, j - 1) == 0 ||
-        this.getTile(i, j + 1) == 0
+        this.getTile(i - 1, j) == TileStates.Opened ||
+        this.getTile(i + 1, j) == TileStates.Opened ||
+        this.getTile(i, j - 1) == TileStates.Opened ||
+        this.getTile(i, j + 1) == TileStates.Opened
       ) {
-        this.field[i * 32 + j] = 0;
-        if (this.map[i * 32 + j] == 0) this.splashOpen(i, j);
+        this.field[i * 32 + j] = TileStates.Opened;
+        if (this.map[i * 32 + j] == MapTiles.Water) this.splashOpen(i, j);
       }
     },
     splashOpen(i, j) {
-      if (this.map[i * 32 + j] > 0) return;
+      if (this.map[i * 32 + j] != MapTiles.Water) return;
       this.openTile(i, j);
 
-      if (i > 0 && this.getTile(i - 1, j) == 1) this.splashOpen(i - 1, j);
-      if (i < 23 && this.getTile(i + 1, j) == 1) this.splashOpen(i + 1, j);
-      if (j > 0 && this.getTile(i, j - 1) == 1) this.splashOpen(i, j - 1);
-      if (j < 31 && this.getTile(i, j + 1) == 1) this.splashOpen(i, j + 1);
+      if (i > 0 && this.getTile(i - 1, j) == TileStates.Closed)
+        this.splashOpen(i - 1, j);
+      if (i < 23 && this.getTile(i + 1, j) == TileStates.Closed)
+        this.splashOpen(i + 1, j);
+      if (j > 0 && this.getTile(i, j - 1) == TileStates.Closed)
+        this.splashOpen(i, j - 1);
+      if (j < 31 && this.getTile(i, j + 1) == TileStates.Closed)
+        this.splashOpen(i, j + 1);
     },
     openEntrance() {
       for (let i = 0; i < 24 * 32; i++) {
-        if (this.map[i] == 2) this.field[i] = 0;
+        if (this.map[i] == MapTiles.Entrance) this.field[i] = TileStates.Opened;
       }
     },
   },
