@@ -1,9 +1,15 @@
 <template>
-  <v-container class="fill-height">
-    <v-responsive class="align-centerfill-height mx-auto" max-width="900">
-      <h1 align="center">Field Page</h1>
-    </v-responsive>
-  </v-container>
+  <div
+    style="
+      position: relative;
+      max-height: 100vh;
+      aspect-ratio: 4/3;
+      margin: auto;
+    "
+  >
+    <v-img src="@/assets/4-3.jpg" style="aspect-ratio: 4/3"></v-img>
+    <TileGrid style="z-index: 10; position: absolute; top: 0; left: 0" />
+  </div>
 </template>
 
 <script>
