@@ -8,7 +8,12 @@
     "
   >
     <img src="@/assets/4-3.jpg" style="aspect-ratio: 4/3; width: 100%" />
-    <ExplosionTile :i="10" :j="13" />
+    <ExplosionTile
+      v-for="bomb in store.bombs"
+      :key="bomb"
+      :i="bomb.i"
+      :j="bomb.j"
+    />
     <TileGrid style="z-index: 10; position: absolute; top: 0; left: 0" />
   </div>
 </template>

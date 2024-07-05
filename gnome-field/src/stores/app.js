@@ -5,6 +5,8 @@ export const TileTypes = {
   Water: 0,
   Stone: 1,
   Entrance: 2,
+  Cliff: 3,
+  Bomb: 4,
 };
 
 export const WallDirections = {
@@ -51,6 +53,7 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     loggedIn: false,
     field: [],
+    bombs: [],
   }),
   actions: {
     login() {
@@ -72,6 +75,8 @@ export const useAppStore = defineStore("app", {
           this.field.push(
             new Tile(stored_map[i], [false, false, false, false])
           );
+          if (stored_map[i] == TileTypes.Bomb)
+            this.bombs.push({ i: Math.floor(i / 32), j: i % 32 });
         }
       } catch (error) {
         console.error("Error loading the map:", error);
