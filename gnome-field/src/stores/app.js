@@ -29,12 +29,20 @@ export const useAppStore = defineStore("app", {
       this.openEntrance();
     },
     getTile(i, j) {
+      if (i < 0 || i >= 24 || j < 0 || j >= 32) return 1;
       return this.field[i * 32 + j];
     },
     openTile(i, j) {
       if (this.field[i * 32 + j] == 0) return;
-      this.field[i * 32 + j] = 0;
-      if (this.map[i * 32 + j] == 0) this.splashOpen(i, j);
+      if (
+        this.getTile(i - 1, j) == 0 ||
+        this.getTile(i + 1, j) == 0 ||
+        this.getTile(i, j - 1) == 0 ||
+        this.getTile(i, j + 1) == 0
+      ) {
+        this.field[i * 32 + j] = 0;
+        if (this.map[i * 32 + j] == 0) this.splashOpen(i, j);
+      }
     },
     splashOpen(i, j) {
       if (this.map[i * 32 + j] > 0) return;
@@ -47,7 +55,7 @@ export const useAppStore = defineStore("app", {
     },
     openEntrance() {
       for (let i = 0; i < 24 * 32; i++) {
-        if (this.map[i] == 2) this.openTile(Math.floor(i / 32), i % 32);
+        if (this.map[i] == 2) this.field[i] = 0;
       }
     },
   },

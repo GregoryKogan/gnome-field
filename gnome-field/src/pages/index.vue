@@ -27,6 +27,10 @@ export default defineComponent({
     const store = useAppStore();
     return { store };
   },
+  mounted() {
+    this.store.login();
+    this.$router.push("/field");
+  },
   data: () => ({
     password: "",
     show: false,
@@ -45,14 +49,12 @@ export default defineComponent({
       return hash;
     },
     submit() {
-      this.store.login();
-      this.$router.push("/field");
-      // if (this.hash(this.password) === 1216985755) {
-      //   this.store.login();
-      //   this.$router.push("/field");
-      // } else {
-      //   alert("Incorrect password");
-      // }
+      if (this.hash(this.password) === 1216985755) {
+        this.store.login();
+        this.$router.push("/field");
+      } else {
+        alert("Incorrect password");
+      }
     },
   },
 });
