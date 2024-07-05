@@ -18,7 +18,7 @@ export default defineComponent({
   },
   computed: {
     opacity() {
-      return this.store.getTile(this.i, this.j);
+      return this.store.getTile(this.i, this.j).visibility;
     },
   },
   data: () => ({}),

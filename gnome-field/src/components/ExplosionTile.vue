@@ -12,7 +12,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useAppStore, TileStates } from "@/stores/app";
+import { useAppStore } from "@/stores/app";
 
 export default defineComponent({
   name: "ExplosionTile",
@@ -26,7 +26,7 @@ export default defineComponent({
   }),
   computed: {
     opacity() {
-      return this.store.getTile(this.i, this.j) == TileStates.Opened ? 1 : 0;
+      return this.store.getTile(this.i, this.j).isOpened() ? 1 : 0;
     },
   },
   mounted() {

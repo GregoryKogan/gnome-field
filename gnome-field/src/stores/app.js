@@ -1,23 +1,56 @@
 // Utilities
 import { defineStore } from "pinia";
 
-export const MapTiles = {
+export const TileTypes = {
   Water: 0,
   Stone: 1,
   Entrance: 2,
 };
 
-export const TileStates = {
+export const WallDirections = {
+  Top: 0,
+  Right: 1,
+  Bottom: 2,
+  Left: 3,
+};
+
+export const TileVisibility = {
   Closed: 1,
   Revealed: 0.5,
   Opened: 0,
 };
 
+export class Tile {
+  constructor(type, walls) {
+    this.type = type;
+    this.walls = walls;
+    this.visibility = TileVisibility.Closed;
+  }
+
+  isOpened() {
+    return this.visibility == TileVisibility.Opened;
+  }
+
+  isClosed() {
+    return (
+      this.visibility == TileVisibility.Closed ||
+      this.visibility == TileVisibility.Revealed
+    );
+  }
+
+  hasWall(direction) {
+    return this.walls[direction];
+  }
+
+  setVisibility(visibility) {
+    this.visibility = visibility;
+  }
+}
+
 export const useAppStore = defineStore("app", {
   state: () => ({
     loggedIn: false,
-    map: Array(24 * 32).fill(1),
-    field: Array(24 * 32).fill(1),
+    field: [],
   }),
   actions: {
     login() {
@@ -30,48 +63,54 @@ export const useAppStore = defineStore("app", {
           throw new Error("Network response was not ok");
         }
         const data = await response.text();
-        this.map = data
+        const stored_map = data
           .split("\n")
           .map((row) => row.split(";"))
           .flat()
           .map(Number);
+        for (let i = 0; i < 24 * 32; i++) {
+          this.field.push(
+            new Tile(stored_map[i], [false, false, false, false])
+          );
+        }
       } catch (error) {
         console.error("Error loading the map:", error);
       }
       this.openEntrance();
     },
     getTile(i, j) {
-      if (i < 0 || i >= 24 || j < 0 || j >= 32) return TileStates.Closed;
+      if (i < 0 || i >= 24 || j < 0 || j >= 32)
+        return new Tile(TileTypes.Stone, [false, false, false, false]);
       return this.field[i * 32 + j];
     },
     openTile(i, j) {
-      if (this.field[i * 32 + j] == TileStates.Opened) return;
+      if (this.field[i * 32 + j].isOpened()) return;
       if (
-        this.getTile(i - 1, j) == TileStates.Opened ||
-        this.getTile(i + 1, j) == TileStates.Opened ||
-        this.getTile(i, j - 1) == TileStates.Opened ||
-        this.getTile(i, j + 1) == TileStates.Opened
+        this.getTile(i - 1, j).isOpened() ||
+        this.getTile(i + 1, j).isOpened() ||
+        this.getTile(i, j - 1).isOpened() ||
+        this.getTile(i, j + 1).isOpened()
       ) {
-        this.field[i * 32 + j] = TileStates.Opened;
-        if (this.map[i * 32 + j] == MapTiles.Water) this.splashOpen(i, j);
+        this.field[i * 32 + j].setVisibility(TileVisibility.Opened);
+        if (this.field[i * 32 + j].type == TileTypes.Water)
+          this.splashOpen(i, j);
       }
     },
     splashOpen(i, j) {
-      if (this.map[i * 32 + j] != MapTiles.Water) return;
+      if (this.field[i * 32 + j].type != TileTypes.Water) return;
       this.openTile(i, j);
 
-      if (i > 0 && this.getTile(i - 1, j) == TileStates.Closed)
-        this.splashOpen(i - 1, j);
-      if (i < 23 && this.getTile(i + 1, j) == TileStates.Closed)
+      if (i > 0 && this.getTile(i - 1, j).isClosed()) this.splashOpen(i - 1, j);
+      if (i < 23 && this.getTile(i + 1, j).isClosed())
         this.splashOpen(i + 1, j);
-      if (j > 0 && this.getTile(i, j - 1) == TileStates.Closed)
-        this.splashOpen(i, j - 1);
-      if (j < 31 && this.getTile(i, j + 1) == TileStates.Closed)
+      if (j > 0 && this.getTile(i, j - 1).isClosed()) this.splashOpen(i, j - 1);
+      if (j < 31 && this.getTile(i, j + 1).isClosed())
         this.splashOpen(i, j + 1);
     },
     openEntrance() {
       for (let i = 0; i < 24 * 32; i++) {
-        if (this.map[i] == MapTiles.Entrance) this.field[i] = TileStates.Opened;
+        if (this.field[i].type == TileTypes.Entrance)
+          this.field[i].setVisibility(TileVisibility.Opened);
       }
     },
   },
