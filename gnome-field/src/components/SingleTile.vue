@@ -21,7 +21,6 @@ export default defineComponent({
       return this.store.getTile(this.i, this.j).visibility;
     },
   },
-  data: () => ({}),
   methods: {
     activate() {
       this.store.openTile(this.i, this.j);

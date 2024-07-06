@@ -26,7 +26,7 @@ export default defineComponent({
   width: 100%;
   display: grid;
   aspect-ratio: 4/3;
-  grid-template-columns: repeat(32, 3.125%);
-  grid-template-rows: repeat(24, 4.166%);
+  grid-template-columns: repeat(32, calc(100% / v-bind("width")));
+  grid-template-rows: repeat(24, calc(100% / v-bind("height")));
 }
 </style>

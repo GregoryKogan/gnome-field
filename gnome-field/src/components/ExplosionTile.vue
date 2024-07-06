@@ -2,11 +2,12 @@
   <img
     src="@/assets/explosion.jpg"
     :style="{
-      top: `${topOffset}%`,
-      left: `${leftOffset}%`,
+      top: `calc((${i} - 1) / 24 * 99%)`,
+      left: `calc((${j} - 1) / 32 * 100%)`,
       opacity: `${opacity}`,
+      height: `calc(100% / 8)`,
     }"
-    style="aspect-ratio: 1; position: absolute; z-index: 5; height: 12.5%"
+    style="aspect-ratio: 1; position: absolute; z-index: 5"
   />
 </template>
 
@@ -20,26 +21,13 @@ export default defineComponent({
     i: Number,
     j: Number,
   },
-  data: () => ({
-    topOffset: 0,
-    leftOffset: 0,
-  }),
-  computed: {
-    opacity() {
-      return this.store.getTile(this.i, this.j).isOpened() ? 1 : 0;
-    },
-  },
-  mounted() {
-    this.calcOffsets();
-  },
   setup() {
     const store = useAppStore();
     return { store };
   },
-  methods: {
-    calcOffsets() {
-      this.topOffset = ((this.i - 1) / 24) * 100;
-      this.leftOffset = ((this.j - 1) / 32) * 100;
+  computed: {
+    opacity() {
+      return this.store.getTile(this.i, this.j).isOpened() ? 1 : 0;
     },
   },
 });
