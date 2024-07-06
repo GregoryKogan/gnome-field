@@ -160,6 +160,10 @@ export class Field {
     return i * this.width + j;
   }
 
+  index2d(index) {
+    return [Math.floor(index / this.width), index % this.width];
+  }
+
   get(i, j) {
     if (i < 0 || i >= this.height || j < 0 || j >= this.width)
       return new Tile(TileTypes.Stone, [false, false, false, false]);
@@ -186,6 +190,12 @@ export class Field {
       oldVisibility == TileVisibility.Closed
     )
       this.handlePortalEntrance(i, j);
+
+    if (
+      this.tiles[this.index(i, j)].type == TileTypes.PortalExit &&
+      oldVisibility == TileVisibility.Closed
+    )
+      this.handlePortalExit(i, j);
 
     if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
       this.open(i - 1, j);
@@ -323,6 +333,14 @@ export class Field {
       this.tiles[entrance_tile].setVisibility(TileVisibility.Opened);
 
     this.splashHide(i, j);
+  }
+
+  handlePortalExit(i, j) {
+    const portal = this.portals.find((portal) =>
+      portal.exit_tiles.includes(this.index(i, j))
+    );
+    for (let exit_tile of portal.exit_tiles)
+      this.open(...this.index2d(exit_tile));
   }
 
   splashHide(i, j) {
