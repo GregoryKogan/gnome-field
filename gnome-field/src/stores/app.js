@@ -231,6 +231,13 @@ export class Field {
     const up = this.get(i - 1, j);
     const down = this.get(i + 1, j);
 
+    if (
+      this.get(i, j).type == TileTypes.Cliff &&
+      this.get(i, j).visibility == TileVisibility.Revealed &&
+      (left.isOpened() || right.isOpened() || up.isOpened() || down.isOpened())
+    )
+      return true;
+
     return (
       (left.isOpened() &&
         left.type != TileTypes.Water &&
@@ -354,8 +361,7 @@ export class Field {
   }
 
   splashHide(i, j) {
-    if (this.tiles[this.index(i, j)].visibility != TileVisibility.Opened)
-      return;
+    if (!this.tiles[this.index(i, j)].isOpened()) return;
     if (this.tiles[this.index(i, j)].type == TileTypes.Water) return;
     this.tiles[this.index(i, j)].setVisibility(TileVisibility.Revealed);
 
@@ -363,18 +369,6 @@ export class Field {
     if (i < this.height - 1) this.splashHide(i + 1, j);
     if (j > 0) this.splashHide(i, j - 1);
     if (j < this.width - 1) this.splashHide(i, j + 1);
-  }
-
-  splashUnhide(i, j) {
-    if (this.tiles[this.index(i, j)].visibility != TileVisibility.Revealed)
-      return;
-    if (this.tiles[this.index(i, j)].type == TileTypes.Water) return;
-    this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
-
-    if (i > 0) this.splashUnhide(i - 1, j);
-    if (i < this.height - 1) this.splashUnhide(i + 1, j);
-    if (j > 0) this.splashUnhide(i, j - 1);
-    if (j < this.width - 1) this.splashUnhide(i, j + 1);
   }
 
   handleMole(i, j) {
