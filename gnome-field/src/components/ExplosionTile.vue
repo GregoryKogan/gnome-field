@@ -30,7 +30,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.log("Bomb has been planted at", this.i, this.j);
     this.calcOffsets();
   },
   setup() {
