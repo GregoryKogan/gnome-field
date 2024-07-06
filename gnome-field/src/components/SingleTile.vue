@@ -1,5 +1,5 @@
 <template>
-  <div @click="activate" class="tile"></div>
+  <div @click="tap" class="tile"></div>
 </template>
 
 <script>
@@ -22,8 +22,8 @@ export default defineComponent({
     },
   },
   methods: {
-    activate() {
-      this.store.openTile(this.i, this.j);
+    tap() {
+      this.store.tapTile(this.i, this.j);
     },
   },
 });

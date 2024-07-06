@@ -9,7 +9,7 @@
   >
     <img src="@/assets/map.png" style="aspect-ratio: 4/3; width: 100%" />
     <ExplosionTile
-      v-for="bomb in store.bombs"
+      v-for="bomb in store.getBombs()"
       :key="bomb"
       :i="bomb.i"
       :j="bomb.j"
