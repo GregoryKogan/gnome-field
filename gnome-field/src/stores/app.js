@@ -7,6 +7,7 @@ export const TileTypes = {
   Entrance: 2,
   Cliff: 3,
   Bomb: 4,
+  Sand: 5,
 };
 
 export const WallDirections = {
@@ -96,9 +97,15 @@ export const useAppStore = defineStore("app", {
       if (!this.canOpen(i, j)) return;
 
       this.field[i * 32 + j].setVisibility(TileVisibility.Opened);
+
       if (this.field[i * 32 + j].type == TileTypes.Bomb)
         this.handleExplosion(i, j);
-      if (this.field[i * 32 + j].type == TileTypes.Water) this.splashOpen(i, j);
+
+      if (
+        this.field[i * 32 + j].type == TileTypes.Water ||
+        this.field[i * 32 + j].type == TileTypes.Sand
+      )
+        this.splashOpen(i, j);
     },
     canOpen(i, j) {
       if (this.getTile(i, j).isOpened()) return false;
@@ -130,7 +137,11 @@ export const useAppStore = defineStore("app", {
     },
     canFlood(i, j) {
       if (this.getTile(i, j).isOpened()) return false;
-      if (this.getTile(i, j).type != TileTypes.Water) return false;
+      if (
+        this.getTile(i, j).type != TileTypes.Water &&
+        this.getTile(i, j).type != TileTypes.Sand
+      )
+        return false;
 
       const left = this.getTile(i, j - 1);
       const right = this.getTile(i, j + 1);
@@ -138,14 +149,22 @@ export const useAppStore = defineStore("app", {
       const down = this.getTile(i + 1, j);
 
       return (
-        (left.isOpened() && left.type == TileTypes.Water) ||
-        (right.isOpened() && right.type == TileTypes.Water) ||
-        (down.isOpened() && down.type == TileTypes.Water) ||
-        (up.isOpened() && up.type == TileTypes.Water)
+        (left.isOpened() &&
+          (left.type == TileTypes.Water || left.type == TileTypes.Sand)) ||
+        (right.isOpened() &&
+          (right.type == TileTypes.Water || right.type == TileTypes.Sand)) ||
+        (up.isOpened() &&
+          (up.type == TileTypes.Water || up.type == TileTypes.Sand)) ||
+        (down.isOpened() &&
+          (down.type == TileTypes.Water || down.type == TileTypes.Sand))
       );
     },
     splashOpen(i, j) {
-      if (this.field[i * 32 + j].type != TileTypes.Water) return;
+      if (
+        this.field[i * 32 + j].type != TileTypes.Water &&
+        this.field[i * 32 + j].type != TileTypes.Sand
+      )
+        return;
       this.floodTile(i, j);
 
       if (i > 0 && this.getTile(i - 1, j).isClosed()) this.splashOpen(i - 1, j);
