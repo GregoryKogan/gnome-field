@@ -7,7 +7,7 @@
       margin: auto;
     "
   >
-    <img src="@/assets/4-3.jpg" style="aspect-ratio: 4/3; width: 100%" />
+    <img src="@/assets/map.png" style="aspect-ratio: 4/3; width: 100%" />
     <ExplosionTile
       v-for="bomb in store.bombs"
       :key="bomb"
