@@ -169,19 +169,38 @@ export class Field {
   open(i, j) {
     if (!this.canOpen(i, j)) return;
 
+    const oldVisibility = this.tiles[this.index(i, j)].visibility;
     this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
-
-    if (this.tiles[this.index(i, j)].type == TileTypes.Bomb)
-      this.handleExplosion(i, j);
-
-    if (this.tiles[this.index(i, j)].type == TileTypes.PortalEntrance)
-      this.handlePortalEntrance(i, j);
 
     if (
       this.tiles[this.index(i, j)].type == TileTypes.Water ||
       this.tiles[this.index(i, j)].type == TileTypes.Sand
     )
       this.splashOpen(i, j);
+
+    if (this.tiles[this.index(i, j)].type == TileTypes.Bomb)
+      this.handleExplosion(i, j);
+
+    if (
+      this.tiles[this.index(i, j)].type == TileTypes.PortalEntrance &&
+      oldVisibility == TileVisibility.Closed
+    )
+      this.handlePortalEntrance(i, j);
+
+    if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
+      this.open(i - 1, j);
+    if (
+      i < this.height - 1 &&
+      this.get(i + 1, j).visibility == TileVisibility.Revealed
+    )
+      this.open(i + 1, j);
+    if (j > 0 && this.get(i, j - 1).visibility == TileVisibility.Revealed)
+      this.open(i, j - 1);
+    if (
+      j < this.width - 1 &&
+      this.get(i, j + 1).visibility == TileVisibility.Revealed
+    )
+      this.open(i, j + 1);
   }
 
   canOpen(i, j) {
@@ -244,16 +263,34 @@ export class Field {
 
   splashOpen(i, j) {
     if (
-      this.tiles[this.index(i, j)].type != TileTypes.Water &&
-      this.tiles[this.index(i, j)].type != TileTypes.Sand
+      this.get(i, j).type != TileTypes.Water &&
+      this.get(i, j).type != TileTypes.Sand
     )
       return;
     this.flood(i, j);
 
     if (i > 0 && this.get(i - 1, j).isClosed()) this.splashOpen(i - 1, j);
-    if (i < 23 && this.get(i + 1, j).isClosed()) this.splashOpen(i + 1, j);
+    if (i < this.height - 1 && this.get(i + 1, j).isClosed())
+      this.splashOpen(i + 1, j);
     if (j > 0 && this.get(i, j - 1).isClosed()) this.splashOpen(i, j - 1);
-    if (j < 31 && this.get(i, j + 1).isClosed()) this.splashOpen(i, j + 1);
+    if (j < this.width - 1 && this.get(i, j + 1).isClosed())
+      this.splashOpen(i, j + 1);
+
+    if (
+      (i > 0 &&
+        this.get(i - 1, j).isOpened() &&
+        this.get(i - 1, j).type != TileTypes.Water) ||
+      (i < this.height - 1 &&
+        this.get(i + 1, j).isOpened() &&
+        this.get(i + 1, j).type != TileTypes.Water) ||
+      (j > 0 &&
+        this.get(i, j - 1).isOpened() &&
+        this.get(i, j - 1).type != TileTypes.Water) ||
+      (j < this.width - 1 &&
+        this.get(i, j + 1).isOpened() &&
+        this.get(i, j + 1).type != TileTypes.Water)
+    )
+      this.open(i, j);
   }
 
   openEntrance() {
@@ -291,12 +328,25 @@ export class Field {
   splashHide(i, j) {
     if (this.tiles[this.index(i, j)].visibility != TileVisibility.Opened)
       return;
+    if (this.tiles[this.index(i, j)].type == TileTypes.Water) return;
     this.tiles[this.index(i, j)].setVisibility(TileVisibility.Revealed);
 
     if (i > 0) this.splashHide(i - 1, j);
     if (i < this.height - 1) this.splashHide(i + 1, j);
     if (j > 0) this.splashHide(i, j - 1);
     if (j < this.width - 1) this.splashHide(i, j + 1);
+  }
+
+  splashUnhide(i, j) {
+    if (this.tiles[this.index(i, j)].visibility != TileVisibility.Revealed)
+      return;
+    if (this.tiles[this.index(i, j)].type == TileTypes.Water) return;
+    this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
+
+    if (i > 0) this.splashUnhide(i - 1, j);
+    if (i < this.height - 1) this.splashUnhide(i + 1, j);
+    if (j > 0) this.splashUnhide(i, j - 1);
+    if (j < this.width - 1) this.splashUnhide(i, j + 1);
   }
 }
 
