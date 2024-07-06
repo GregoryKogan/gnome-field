@@ -23,8 +23,9 @@ export const WallDirections = {
 
 export const TileVisibility = {
   Closed: 1,
-  Revealed: 0.5,
-  Opened: 0,
+  Scanned: 2,
+  Revealed: 3,
+  Opened: 4,
 };
 
 export class Tile {
@@ -39,7 +40,10 @@ export class Tile {
   }
 
   isClosed() {
-    return this.visibility == TileVisibility.Closed;
+    return (
+      this.visibility == TileVisibility.Closed ||
+      this.visibility == TileVisibility.Scanned
+    );
   }
 
   isRevealed() {
@@ -196,6 +200,12 @@ export class Field {
       oldVisibility == TileVisibility.Closed
     )
       this.handlePortalExit(i, j);
+
+    if (
+      this.tiles[this.index(i, j)].type == TileTypes.Mole &&
+      oldVisibility == TileVisibility.Closed
+    )
+      this.handleMole(i, j);
 
     if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
       this.open(i - 1, j);
@@ -365,6 +375,18 @@ export class Field {
     if (i < this.height - 1) this.splashUnhide(i + 1, j);
     if (j > 0) this.splashUnhide(i, j - 1);
     if (j < this.width - 1) this.splashUnhide(i, j + 1);
+  }
+
+  handleMole(i, j) {
+    for (let h_offset = -3; h_offset <= 3; h_offset++) {
+      for (let v_offset = -3; v_offset <= 3; v_offset++) {
+        if (this.get(i + v_offset, j + h_offset).isClosed()) {
+          this.tiles[this.index(i + v_offset, j + h_offset)].setVisibility(
+            TileVisibility.Scanned
+          );
+        }
+      }
+    }
   }
 }
 

@@ -4,7 +4,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useAppStore } from "@/stores/app";
+import { useAppStore, TileVisibility } from "@/stores/app";
 
 export default defineComponent({
   name: "SingleTile",
@@ -18,7 +18,24 @@ export default defineComponent({
   },
   computed: {
     opacity() {
-      return this.store.getTile(this.i, this.j).visibility;
+      const visibility = this.store.getTile(this.i, this.j).visibility;
+      switch (visibility) {
+        case TileVisibility.Closed:
+          return 1;
+        case TileVisibility.Opened:
+          return 0;
+        case TileVisibility.Revealed:
+          return 0.5;
+        case TileVisibility.Scanned:
+          return 0.2;
+        default:
+          return 0;
+      }
+    },
+    color() {
+      const visibility = this.store.getTile(this.i, this.j).visibility;
+      if (visibility != TileVisibility.Scanned) return "#2a2a2a";
+      return "#00ff00";
     },
   },
   methods: {
@@ -31,8 +48,8 @@ export default defineComponent({
 
 <style scoped>
 .tile {
-  background-color: #565656;
-  border: 1px solid #8f8f8f;
+  background-color: v-bind("color");
+  border: 1px solid #01ff12;
   aspect-ratio: 1;
   width: 100%;
   opacity: v-bind("opacity");
