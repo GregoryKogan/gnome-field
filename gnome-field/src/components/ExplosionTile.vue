@@ -14,6 +14,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useAppStore } from "@/stores/app";
+import { watch } from "vue";
 
 export default defineComponent({
   name: "ExplosionTile",
@@ -25,10 +26,22 @@ export default defineComponent({
     const store = useAppStore();
     return { store };
   },
-  computed: {
-    opacity() {
-      return this.store.getTile(this.i, this.j).isOpened() ? 1 : 0;
-    },
+  mounted() {
+    watch(
+      () => this.store.getTile(this.i, this.j).isOpened(),
+      (isOpened) => {
+        if (isOpened && !this.opened) {
+          this.opened = true;
+          setTimeout(() => {
+            this.opacity = 1;
+          }, 1000);
+        }
+      }
+    );
   },
+  data: () => ({
+    opened: false,
+    opacity: 0,
+  }),
 });
 </script>

@@ -70,9 +70,6 @@ export class Field {
         this.bombs.push({ i: Math.floor(i / width), j: i % width });
     }
 
-    console.log(this.tiles);
-    console.log(this.bombs);
-
     this.openEntrance();
   }
 
