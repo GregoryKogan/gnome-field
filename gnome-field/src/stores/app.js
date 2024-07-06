@@ -1,5 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
+import { da } from "vuetify/locale";
 
 export const TileTypes = {
   Water: 0,
@@ -8,6 +9,10 @@ export const TileTypes = {
   Cliff: 3,
   Bomb: 4,
   Sand: 5,
+  Mole: 6,
+  PortalEntrance: 7,
+  Target: 8,
+  PortalExit: 9,
 };
 
 export const WallDirections = {
@@ -58,11 +63,19 @@ export class Tile {
   }
 }
 
+export class Portal {
+  constructor(entrance_tiles, exit_tiles) {
+    this.entrance_tiles = entrance_tiles;
+    this.exit_tiles = exit_tiles;
+  }
+}
+
 export class Field {
-  constructor(width, height, tiles) {
+  constructor(width, height, tiles, portals = []) {
     this.width = width;
     this.height = height;
     this.tiles = tiles;
+    this.portals = portals;
     this.bombs = [];
 
     for (let i = 0; i < width * height; i++) {
@@ -102,18 +115,21 @@ export class Field {
       if (!response.ok) throw new Error("Network response was not ok");
 
       const data = await response.json();
-      const stored_map = data.tiles.map((tile) => {
+      const tiles = data.tiles.map((tile) => {
         let newTile = new Tile(tile.type, tile.walls);
         newTile.setVisibility(tile.visibility);
         return newTile;
       });
-      return new Field(data.width, data.height, stored_map);
+      const portals = data.portals.map(
+        (portal) => new Portal(portal.entrance, portal.exit)
+      );
+      return new Field(data.width, data.height, tiles, portals);
     } catch (error) {
       console.error("Error loading the map:", error);
     }
   }
 
-  toJSON(filename = "/map.json") {
+  exportToJson(filename) {
     const data = {
       width: this.width,
       height: this.height,
@@ -121,6 +137,10 @@ export class Field {
         type: tile.type,
         walls: tile.walls,
         visibility: tile.visibility,
+      })),
+      portals: this.portals.map((portal) => ({
+        entrance: portal.entrance_tiles,
+        exit: portal.exit_tiles,
       })),
     };
     const json = JSON.stringify(data);
