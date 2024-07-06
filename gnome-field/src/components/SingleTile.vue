@@ -32,7 +32,7 @@ export default defineComponent({
 <style scoped>
 .tile {
   background-color: #565656;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #8f8f8f;
   aspect-ratio: 1;
   width: 100%;
   opacity: v-bind("opacity");
