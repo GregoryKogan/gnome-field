@@ -1,6 +1,6 @@
 <template>
   <img
-    src="@/assets/explosion.jpg"
+    src="@/assets/explosion.png"
     :style="{
       top: `calc((${i} - 1) / 24 * 99%)`,
       left: `calc((${j} - 1) / 32 * 100%)`,

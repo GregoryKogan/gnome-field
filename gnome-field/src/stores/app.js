@@ -59,17 +59,19 @@ export class Tile {
 }
 
 export class Field {
-  constructor(width, height, types) {
+  constructor(width, height, tiles) {
     this.width = width;
     this.height = height;
-    this.tiles = [];
+    this.tiles = tiles;
     this.bombs = [];
 
     for (let i = 0; i < width * height; i++) {
-      this.tiles.push(new Tile(types[i], [false, false, false, false]));
-      if (types[i] == TileTypes.Bomb)
+      if (this.tiles[i].type == TileTypes.Bomb)
         this.bombs.push({ i: Math.floor(i / width), j: i % width });
     }
+
+    console.log(this.tiles);
+    console.log(this.bombs);
 
     this.openEntrance();
   }
@@ -85,11 +87,57 @@ export class Field {
         .split("\n")
         .map((row) => row.split(";"))
         .flat()
-        .map(Number);
+        .map(Number)
+        .map((tile) => {
+          let newTile = new Tile(tile, [false, false, false, false]);
+          newTile.setVisibility(TileVisibility.Closed);
+          return newTile;
+        });
       return new Field(width, height, stored_map);
     } catch (error) {
       console.error("Error loading the map:", error);
     }
+  }
+
+  static async fromJSON(json_filename) {
+    try {
+      const response = await fetch(json_filename);
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const data = await response.json();
+      const stored_map = data.tiles.map((tile) => {
+        let newTile = new Tile(tile.type, tile.walls);
+        newTile.setVisibility(tile.visibility);
+        return newTile;
+      });
+      return new Field(data.width, data.height, stored_map);
+    } catch (error) {
+      console.error("Error loading the map:", error);
+    }
+  }
+
+  toJSON(filename = "/map.json") {
+    const data = {
+      width: this.width,
+      height: this.height,
+      tiles: this.tiles.map((tile) => ({
+        type: tile.type,
+        walls: tile.walls,
+        visibility: tile.visibility,
+      })),
+    };
+    const json = JSON.stringify(data);
+
+    let element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(json)
+    );
+    element.setAttribute("download", filename);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 
   index(i, j) {
@@ -220,7 +268,8 @@ export const useAppStore = defineStore("app", {
       this.loggedIn = true;
     },
     async loadMap() {
-      this.field = await Field.fromCSV(32, 24, "/map.csv");
+      // this.field = await Field.fromCSV(32, 24, "/map.csv");
+      this.field = await Field.fromJSON("/map.json");
     },
     tapTile(i, j) {
       this.field.open(i, j);
