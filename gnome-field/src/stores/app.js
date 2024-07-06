@@ -1,6 +1,5 @@
 // Utilities
 import { defineStore } from "pinia";
-import { da } from "vuetify/locale";
 
 export const TileTypes = {
   Water: 0,
@@ -175,6 +174,9 @@ export class Field {
     if (this.tiles[this.index(i, j)].type == TileTypes.Bomb)
       this.handleExplosion(i, j);
 
+    if (this.tiles[this.index(i, j)].type == TileTypes.PortalEntrance)
+      this.handlePortalEntrance(i, j);
+
     if (
       this.tiles[this.index(i, j)].type == TileTypes.Water ||
       this.tiles[this.index(i, j)].type == TileTypes.Sand
@@ -273,6 +275,29 @@ export class Field {
       }
     }
   }
+
+  handlePortalEntrance(i, j) {
+    const portal = this.portals.find((portal) =>
+      portal.entrance_tiles.includes(this.index(i, j))
+    );
+    for (let exit_tile of portal.exit_tiles)
+      this.tiles[exit_tile].setVisibility(TileVisibility.Opened);
+    for (let entrance_tile of portal.entrance_tiles)
+      this.tiles[entrance_tile].setVisibility(TileVisibility.Opened);
+
+    this.splashHide(i, j);
+  }
+
+  splashHide(i, j) {
+    if (this.tiles[this.index(i, j)].visibility != TileVisibility.Opened)
+      return;
+    this.tiles[this.index(i, j)].setVisibility(TileVisibility.Revealed);
+
+    if (i > 0) this.splashHide(i - 1, j);
+    if (i < this.height - 1) this.splashHide(i + 1, j);
+    if (j > 0) this.splashHide(i, j - 1);
+    if (j < this.width - 1) this.splashHide(i, j + 1);
+  }
 }
 
 export const useAppStore = defineStore("app", {
@@ -286,6 +311,7 @@ export const useAppStore = defineStore("app", {
     },
     async loadMap() {
       // this.field = await Field.fromCSV(32, 24, "/map.csv");
+      // this.field.exportToJson("map.json");
       this.field = await Field.fromJSON("/map.json");
     },
     tapTile(i, j) {
