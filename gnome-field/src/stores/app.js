@@ -35,9 +35,13 @@ export class Tile {
   }
 
   isClosed() {
+    return this.visibility == TileVisibility.Closed;
+  }
+
+  isRevealed() {
     return (
-      this.visibility == TileVisibility.Closed ||
-      this.visibility == TileVisibility.Revealed
+      this.visibility == TileVisibility.Revealed ||
+      this.visibility == TileVisibility.Opened
     );
   }
 
@@ -133,10 +137,13 @@ export const useAppStore = defineStore("app", {
     floodTile(i, j) {
       if (!this.canFlood(i, j)) return;
 
-      this.field[i * 32 + j].setVisibility(TileVisibility.Opened);
+      if (this.getTile(i, j).type == TileTypes.Water)
+        this.field[i * 32 + j].setVisibility(TileVisibility.Opened);
+      if (this.getTile(i, j).type == TileTypes.Sand)
+        this.field[i * 32 + j].setVisibility(TileVisibility.Revealed);
     },
     canFlood(i, j) {
-      if (this.getTile(i, j).isOpened()) return false;
+      if (this.getTile(i, j).isRevealed()) return false;
       if (
         this.getTile(i, j).type != TileTypes.Water &&
         this.getTile(i, j).type != TileTypes.Sand
@@ -149,13 +156,13 @@ export const useAppStore = defineStore("app", {
       const down = this.getTile(i + 1, j);
 
       return (
-        (left.isOpened() &&
+        (left.isRevealed() &&
           (left.type == TileTypes.Water || left.type == TileTypes.Sand)) ||
-        (right.isOpened() &&
+        (right.isRevealed() &&
           (right.type == TileTypes.Water || right.type == TileTypes.Sand)) ||
-        (up.isOpened() &&
+        (up.isRevealed() &&
           (up.type == TileTypes.Water || up.type == TileTypes.Sand)) ||
-        (down.isOpened() &&
+        (down.isRevealed() &&
           (down.type == TileTypes.Water || down.type == TileTypes.Sand))
       );
     },
