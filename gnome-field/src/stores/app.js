@@ -1,5 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
+import { th } from "vuetify/locale";
 
 export const TileTypes = {
   Water: 0,
@@ -15,9 +16,9 @@ export const TileTypes = {
 };
 
 export const WallDirections = {
-  Top: 0,
+  Up: 0,
   Right: 1,
-  Bottom: 2,
+  Down: 2,
   Left: 3,
 };
 
@@ -178,17 +179,56 @@ export class Field {
     if (!this.canOpen(i, j)) return;
 
     const oldVisibility = this.tiles[this.index(i, j)].visibility;
-    this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
 
+    for (let dir of Object.values(WallDirections)) {
+      if (this.get(i, j).hasWall(dir)) continue;
+      if (
+        (dir == WallDirections.Up &&
+          i > 0 &&
+          this.get(i - 1, j).isOpened() &&
+          this.get(i - 1, j).type != TileTypes.Water &&
+          this.get(i - 1, j).type != TileTypes.Cliff &&
+          !this.get(i - 1, j).hasWall(WallDirections.Down)) ||
+        (dir == WallDirections.Right &&
+          j < this.width - 1 &&
+          this.get(i, j + 1).isOpened() &&
+          this.get(i, j + 1).type != TileTypes.Water &&
+          this.get(i, j + 1).type != TileTypes.Cliff &&
+          !this.get(i, j + 1).hasWall(WallDirections.Left)) ||
+        (dir == WallDirections.Down &&
+          i < this.height - 1 &&
+          this.get(i + 1, j).isOpened() &&
+          this.get(i + 1, j).type != TileTypes.Water &&
+          this.get(i + 1, j).type != TileTypes.Cliff &&
+          !this.get(i + 1, j).hasWall(WallDirections.Up)) ||
+        (dir == WallDirections.Left &&
+          j > 0 &&
+          this.get(i, j - 1).isOpened() &&
+          this.get(i, j - 1).type != TileTypes.Water &&
+          this.get(i, j - 1).type != TileTypes.Cliff &&
+          !this.get(i, j - 1).hasWall(WallDirections.Right))
+      ) {
+        this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
+        break;
+      }
+    }
+    if (!this.get(i, j).isOpened()) {
+      this.tiles[this.index(i, j)].setVisibility(TileVisibility.Revealed);
+      return;
+    }
+
+    // Splash open water and sand
     if (
       this.tiles[this.index(i, j)].type == TileTypes.Water ||
       this.tiles[this.index(i, j)].type == TileTypes.Sand
     )
       this.splashOpen(i, j);
 
+    // Handle bomb tiles
     if (this.tiles[this.index(i, j)].type == TileTypes.Bomb)
       this.handleExplosion(i, j);
 
+    // Handle portal tiles
     if (
       this.tiles[this.index(i, j)].type == TileTypes.PortalEntrance &&
       oldVisibility == TileVisibility.Closed
@@ -201,12 +241,19 @@ export class Field {
     )
       this.handlePortalExit(i, j);
 
+    // Handle mole tiles
     if (
       this.tiles[this.index(i, j)].type == TileTypes.Mole &&
       oldVisibility == TileVisibility.Closed
     )
       this.handleMole(i, j);
 
+    // Open adjacent revealed tiles
+    if (
+      this.get(i, j).type == TileTypes.Cliff ||
+      this.get(i, j).type == TileTypes.Water
+    )
+      return;
     if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
       this.open(i - 1, j);
     if (
@@ -241,16 +288,20 @@ export class Field {
     return (
       (left.isOpened() &&
         left.type != TileTypes.Water &&
-        left.type != TileTypes.Cliff) ||
+        left.type != TileTypes.Cliff &&
+        !left.hasWall(WallDirections.Right)) ||
       (right.isOpened() &&
         right.type != TileTypes.Water &&
-        right.type != TileTypes.Cliff) ||
+        right.type != TileTypes.Cliff &&
+        !right.hasWall(WallDirections.Left)) ||
       (down.isOpened() &&
         down.type != TileTypes.Water &&
-        down.type != TileTypes.Cliff) ||
+        down.type != TileTypes.Cliff &&
+        !down.hasWall(WallDirections.Up)) ||
       (up.isOpened() &&
         up.type != TileTypes.Water &&
-        up.type != TileTypes.Cliff)
+        up.type != TileTypes.Cliff &&
+        !up.hasWall(WallDirections.Down))
     );
   }
 

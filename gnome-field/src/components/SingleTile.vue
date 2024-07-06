@@ -35,7 +35,7 @@ export default defineComponent({
     color() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
       if (visibility != TileVisibility.Scanned) return "#2a2a2a";
-      return "#00ff00";
+      return "#ff00ff";
     },
   },
   methods: {
