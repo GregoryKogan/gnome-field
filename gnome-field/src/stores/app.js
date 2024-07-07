@@ -407,12 +407,17 @@ export class Field {
     const portal = this.portals.find((portal) =>
       portal.entrance_tiles.includes(this.index(i, j))
     );
+
+    const exit_is_opened = portal.exit_tiles.some((exit_tile) =>
+      this.tiles[exit_tile].isOpened()
+    );
+
     for (let exit_tile of portal.exit_tiles)
       this.tiles[exit_tile].setVisibility(TileVisibility.Opened);
     for (let entrance_tile of portal.entrance_tiles)
       this.tiles[entrance_tile].setVisibility(TileVisibility.Opened);
 
-    this.splashHide(i, j);
+    if (!exit_is_opened) this.splashHide(i, j);
   }
 
   handlePortalExit(i, j) {
