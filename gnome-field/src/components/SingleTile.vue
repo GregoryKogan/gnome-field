@@ -27,7 +27,7 @@ export default defineComponent({
         case TileVisibility.Revealed:
           return 0.5;
         case TileVisibility.Scanned:
-          return 0.4;
+          return 0.3;
         default:
           return 0;
       }
