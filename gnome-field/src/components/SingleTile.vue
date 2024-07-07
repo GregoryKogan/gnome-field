@@ -34,7 +34,9 @@ export default defineComponent({
     },
     color() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
-      if (visibility != TileVisibility.Scanned) return "#2a2a2a";
+      if (visibility != TileVisibility.Scanned) {
+        return this.store.isAvailable(this.i, this.j) ? "#277a33" : "#2a2a2a";
+      }
       return "#ff00ff";
     },
   },
@@ -44,6 +46,7 @@ export default defineComponent({
     },
   },
 });
+// border: 1px solid #01ff12;
 </script>
 
 <style scoped>

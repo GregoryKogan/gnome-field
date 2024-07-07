@@ -1,6 +1,5 @@
 // Utilities
 import { defineStore } from "pinia";
-import { th } from "vuetify/locale";
 
 export const TileTypes = {
   Water: 0,
@@ -81,6 +80,7 @@ export class Field {
     this.tiles = tiles;
     this.portals = portals;
     this.bombs = [];
+    this.availabilityMap = new Array(width * height).fill(false);
 
     for (let i = 0; i < width * height; i++) {
       if (this.tiles[i].type == TileTypes.Bomb)
@@ -180,39 +180,48 @@ export class Field {
 
     const oldVisibility = this.tiles[this.index(i, j)].visibility;
 
+    const left = this.get(i, j - 1);
+    const right = this.get(i, j + 1);
+    const up = this.get(i - 1, j);
+    const down = this.get(i + 1, j);
+    const current = this.get(i, j);
+
+    if (current.type == TileTypes.Cliff)
+      this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
+
     for (let dir of Object.values(WallDirections)) {
-      if (this.get(i, j).hasWall(dir)) continue;
+      if (current.hasWall(dir)) continue;
       if (
         (dir == WallDirections.Up &&
           i > 0 &&
-          this.get(i - 1, j).isOpened() &&
-          this.get(i - 1, j).type != TileTypes.Water &&
-          this.get(i - 1, j).type != TileTypes.Cliff &&
-          !this.get(i - 1, j).hasWall(WallDirections.Down)) ||
+          up.isOpened() &&
+          up.type != TileTypes.Water &&
+          up.type != TileTypes.Cliff &&
+          !up.hasWall(WallDirections.Down)) ||
         (dir == WallDirections.Right &&
           j < this.width - 1 &&
-          this.get(i, j + 1).isOpened() &&
-          this.get(i, j + 1).type != TileTypes.Water &&
-          this.get(i, j + 1).type != TileTypes.Cliff &&
-          !this.get(i, j + 1).hasWall(WallDirections.Left)) ||
+          right.isOpened() &&
+          right.type != TileTypes.Water &&
+          right.type != TileTypes.Cliff &&
+          !right.hasWall(WallDirections.Left)) ||
         (dir == WallDirections.Down &&
           i < this.height - 1 &&
-          this.get(i + 1, j).isOpened() &&
-          this.get(i + 1, j).type != TileTypes.Water &&
-          this.get(i + 1, j).type != TileTypes.Cliff &&
-          !this.get(i + 1, j).hasWall(WallDirections.Up)) ||
+          down.isOpened() &&
+          down.type != TileTypes.Water &&
+          down.type != TileTypes.Cliff &&
+          !down.hasWall(WallDirections.Up)) ||
         (dir == WallDirections.Left &&
           j > 0 &&
-          this.get(i, j - 1).isOpened() &&
-          this.get(i, j - 1).type != TileTypes.Water &&
-          this.get(i, j - 1).type != TileTypes.Cliff &&
-          !this.get(i, j - 1).hasWall(WallDirections.Right))
+          left.isOpened() &&
+          left.type != TileTypes.Water &&
+          left.type != TileTypes.Cliff &&
+          !left.hasWall(WallDirections.Right))
       ) {
         this.tiles[this.index(i, j)].setVisibility(TileVisibility.Opened);
         break;
       }
     }
-    if (!this.get(i, j).isOpened()) {
+    if (!current.isOpened()) {
       this.tiles[this.index(i, j)].setVisibility(TileVisibility.Revealed);
       return;
     }
@@ -249,11 +258,8 @@ export class Field {
       this.handleMole(i, j);
 
     // Open adjacent revealed tiles
-    if (
-      this.get(i, j).type == TileTypes.Cliff ||
-      this.get(i, j).type == TileTypes.Water
-    )
-      return;
+    // if (current.type == TileTypes.Cliff || current.type == TileTypes.Water)
+    //   return;
     if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
       this.open(i - 1, j);
     if (
@@ -372,10 +378,16 @@ export class Field {
   }
 
   openEntrance() {
-    for (let i = 0; i < this.width * this.height; i++) {
-      if (this.tiles[i].type == TileTypes.Entrance)
-        this.tiles[i].setVisibility(TileVisibility.Opened);
-    }
+    const entrance_tile_index = this.tiles.findIndex(
+      (tile) => tile.type == TileTypes.Entrance
+    );
+    this.tiles[entrance_tile_index].setVisibility(TileVisibility.Opened);
+
+    const [i, j] = this.index2d(entrance_tile_index);
+    if (i > 0) this.availabilityMap[this.index(i - 1, j)] = true;
+    if (i < this.height - 1) this.availabilityMap[this.index(i + 1, j)] = true;
+    if (j > 0) this.availabilityMap[this.index(i, j - 1)] = true;
+    if (j < this.width - 1) this.availabilityMap[this.index(i, j + 1)] = true;
   }
 
   handleExplosion(i, j) {
@@ -433,6 +445,14 @@ export class Field {
       }
     }
   }
+
+  updateAvailabilityMap() {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        this.availabilityMap[this.index(i, j)] = this.canOpen(i, j);
+      }
+    }
+  }
 }
 
 export const useAppStore = defineStore("app", {
@@ -451,12 +471,16 @@ export const useAppStore = defineStore("app", {
     },
     tapTile(i, j) {
       this.field.open(i, j);
+      this.field.updateAvailabilityMap();
     },
     getTile(i, j) {
       return this.field.get(i, j);
     },
     getBombs() {
       return this.field.bombs;
+    },
+    isAvailable(i, j) {
+      return this.field.availabilityMap[this.field.index(i, j)];
     },
   },
 });
