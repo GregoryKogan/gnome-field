@@ -464,6 +464,7 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     loggedIn: false,
     field: null,
+    steps: 0,
   }),
   actions: {
     login() {
@@ -475,8 +476,11 @@ export const useAppStore = defineStore("app", {
       this.field = await Field.fromJSON("/map.json");
     },
     tapTile(i, j) {
+      const oldField = this.field.tiles.map((tile) => ({ ...tile }));
       this.field.open(i, j);
       this.field.updateAvailabilityMap();
+      const newField = this.field.tiles.map((tile) => ({ ...tile }));
+      if (JSON.stringify(oldField) != JSON.stringify(newField)) this.steps++;
     },
     getTile(i, j) {
       return this.field.get(i, j);
@@ -486,6 +490,9 @@ export const useAppStore = defineStore("app", {
     },
     isAvailable(i, j) {
       return this.field.availabilityMap[this.field.index(i, j)];
+    },
+    getSteps() {
+      return this.steps;
     },
   },
 });

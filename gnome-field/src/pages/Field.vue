@@ -1,21 +1,22 @@
 <template>
-  <div
-    style="
-      position: relative;
-      max-height: 100vh;
-      aspect-ratio: 4/3;
-      margin: auto;
-    "
-  >
-    <img src="@/assets/map.png" style="aspect-ratio: 4/3; width: 100%" />
-    <ExplosionTile
-      v-for="bomb in store.getBombs()"
-      :key="bomb"
-      :i="bomb.i"
-      :j="bomb.j"
-    />
-    <TileGrid style="z-index: 10; position: absolute; top: 0; left: 0" />
-  </div>
+  <v-container fluid fill-height style="height: 100%">
+    <v-row align="start" dense fill-height style="height: 100%">
+      <div
+        style="
+          position: relative;
+          max-height: 100vh;
+          aspect-ratio: 4/3;
+          width: 70%;
+          margin: auto;
+        "
+      >
+        <GameField />
+      </div>
+      <div style="width: 30%; padding: 1em">
+        <StatsColumn />
+      </div>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
