@@ -27,17 +27,21 @@ export default defineComponent({
         case TileVisibility.Revealed:
           return 0.5;
         case TileVisibility.Scanned:
-          return 0.2;
+          return 0.4;
         default:
           return 0;
       }
     },
     color() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
-      if (visibility != TileVisibility.Scanned) {
-        return this.store.isAvailable(this.i, this.j) ? "#277a33" : "#2a2a2a";
-      }
-      return "#ff00ff";
+      const availability = this.store.isAvailable(this.i, this.j);
+      if (visibility != TileVisibility.Scanned)
+        return availability ? "#277a33" : "#2a2a2a";
+      return availability ? "#ff00ff" : "#2e002e";
+    },
+    borderColor() {
+      const visibility = this.store.getTile(this.i, this.j).visibility;
+      return visibility == TileVisibility.Scanned ? "#ff00ff" : "#01ff12";
     },
   },
   methods: {
@@ -46,13 +50,12 @@ export default defineComponent({
     },
   },
 });
-// border: 1px solid #01ff12;
 </script>
 
 <style scoped>
 .tile {
   background-color: v-bind("color");
-  border: 1px solid #01ff12;
+  border: 1px solid v-bind("borderColor");
   aspect-ratio: 1;
   width: 100%;
   opacity: v-bind("opacity");
