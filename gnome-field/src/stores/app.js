@@ -490,6 +490,7 @@ export const useAppStore = defineStore("app", {
         this.journal.push({
           tile: { i, j },
           time: new Date().toLocaleTimeString("ru-RU", {
+            hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
             hour12: false,
