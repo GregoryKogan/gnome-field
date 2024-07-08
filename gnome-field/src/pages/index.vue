@@ -6,13 +6,13 @@
           position: relative;
           max-height: 100vh;
           aspect-ratio: 4/3;
-          width: 70%;
+          width: max(calc(100% - 22rem), 50%);
           margin: auto;
         "
       >
         <GameField />
       </div>
-      <div style="width: 30%; padding: 1em; height: 100%">
+      <div style="width: 22rem; padding: 1em; height: 100%">
         <StatsColumn />
       </div>
     </v-row>
