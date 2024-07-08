@@ -24,3 +24,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+html {
+  overflow: hidden;
+}
+</style>

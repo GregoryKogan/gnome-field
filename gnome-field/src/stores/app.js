@@ -464,7 +464,11 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     loggedIn: false,
     field: null,
-    steps: 0,
+    steps: 1,
+    countDownDate: new Date().getTime(),
+    timeToShutdown: 0,
+    creditsSpent: 0,
+    journal: [],
   }),
   actions: {
     login() {
@@ -480,7 +484,33 @@ export const useAppStore = defineStore("app", {
       this.field.open(i, j);
       this.field.updateAvailabilityMap();
       const newField = this.field.tiles.map((tile) => ({ ...tile }));
-      if (JSON.stringify(oldField) != JSON.stringify(newField)) this.steps++;
+
+      if (JSON.stringify(oldField) != JSON.stringify(newField)) {
+        this.steps++;
+
+        if (this.timeToShutdown == 0) this.creditsSpent += 2;
+        else this.creditsSpent += 1;
+
+        this.journal.push({
+          tile: { i, j },
+          time: new Date().toLocaleTimeString("ru-RU", {
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          }),
+          type: this.field.get(i, j).type,
+        });
+
+        this.countDownDate = new Date().getTime() + 60 * 1000;
+        const interval = setInterval(() => {
+          const now = new Date().getTime();
+          this.timeToShutdown = this.countDownDate - now;
+          if (this.timeToShutdown < 0) {
+            clearInterval(interval);
+            this.timeToShutdown = 0;
+          }
+        }, 500);
+      }
     },
     getTile(i, j) {
       return this.field.get(i, j);
@@ -493,6 +523,15 @@ export const useAppStore = defineStore("app", {
     },
     getSteps() {
       return this.steps;
+    },
+    getTimeToShutdown() {
+      return this.timeToShutdown;
+    },
+    getCreditsSpent() {
+      return this.creditsSpent;
+    },
+    getJournal() {
+      return this.journal;
     },
   },
 });

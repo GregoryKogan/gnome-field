@@ -12,7 +12,7 @@
       >
         <GameField />
       </div>
-      <div style="width: 30%; padding: 1em">
+      <div style="width: 30%; padding: 1em; height: 100%">
         <StatsColumn />
       </div>
     </v-row>
