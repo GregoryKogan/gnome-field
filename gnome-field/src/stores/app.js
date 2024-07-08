@@ -462,7 +462,6 @@ export class Field {
 
 export const useAppStore = defineStore("app", {
   state: () => ({
-    loggedIn: false,
     field: null,
     steps: 1,
     countDownDate: new Date().getTime(),
@@ -471,13 +470,10 @@ export const useAppStore = defineStore("app", {
     journal: [],
   }),
   actions: {
-    login() {
-      this.loggedIn = true;
-    },
     async loadMap() {
       // this.field = await Field.fromCSV(32, 24, "/map.csv");
       // this.field.exportToJson("map.json");
-      this.field = await Field.fromJSON("/map.json");
+      this.field = await Field.fromJSON("/gnome-field/map.json");
     },
     tapTile(i, j) {
       const oldField = this.field.tiles.map((tile) => ({ ...tile }));

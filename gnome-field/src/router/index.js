@@ -14,11 +14,6 @@ const routes = [
     name: "index",
     component: () => import("@/pages/index.vue"),
   },
-  {
-    path: "/field",
-    name: "field",
-    component: () => import("@/pages/Field.vue"),
-  },
 ];
 
 const router = createRouter({

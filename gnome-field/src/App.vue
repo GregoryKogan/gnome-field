@@ -14,13 +14,8 @@ export default defineComponent({
   name: "DefaultLayout",
   setup() {
     const store = useAppStore();
+    store.loadMap();
     return { store };
-  },
-  mounted() {
-    this.store.loadMap();
-    if (!this.store.loggedIn) {
-      this.$router.push("/");
-    }
   },
 });
 </script>

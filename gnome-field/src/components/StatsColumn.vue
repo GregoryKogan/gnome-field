@@ -7,6 +7,7 @@
       font-family: monospace;
       overflow: hidden;
     "
+    @click="toggleFullscreen()"
   >
     <h1>Данные бурения</h1>
     <span>Пробурено кубов: {{ store.getSteps() }}</span>
@@ -47,6 +48,9 @@ export default defineComponent({
     const store = useAppStore();
     return { store };
   },
+  data: () => ({
+    fullscreen: false,
+  }),
   computed: {
     shutdownTime() {
       const time = this.store.getTimeToShutdown();
@@ -85,6 +89,31 @@ export default defineComponent({
           return "портал (выход)";
         default:
           return "неизвестно";
+      }
+    },
+    toggleFullscreen() {
+      this.fullscreen = !this.fullscreen;
+      const elem = document.documentElement;
+      if (this.fullscreen) {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+          /* Safari */
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          /* IE11 */
+          elem.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          /* Safari */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          /* IE11 */
+          document.msExitFullscreen();
+        }
       }
     },
   },
