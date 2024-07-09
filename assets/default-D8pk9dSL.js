@@ -1,0 +1,1 @@
+import{a5 as o,ai as n,a8 as a,j as e,am as r,an as s,ao as _}from"./index-DDk2wGfK.js";const i={__name:"default",setup(c){return(l,u)=>{const t=_("router-view");return o(),n(s,null,{default:a(()=>[e(r,null,{default:a(()=>[e(t)]),_:1})]),_:1})}}};export{i as default};
