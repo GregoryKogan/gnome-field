@@ -7,26 +7,34 @@
       font-family: monospace;
       overflow: hidden;
     "
-    @click="toggleFullscreen()"
   >
-    <h1>Данные бурения</h1>
+    <h1 @click="toggleFullscreen()">Данные бурения</h1>
+    <div
+      v-if="!store.drillInitialized"
+      style="display: flex; justify-content: center; align-items: center"
+    >
+      <v-btn @click="store.initDrill()" variant="outlined" style="margin: 1em"
+        >за счёт фирмы!</v-btn
+      >
+      <br />
+    </div>
+    <span>Цена бурения: 1 кредит</span>
+    <br />
     <span>Пробурено кубов: {{ store.getSteps() }}</span>
     <br />
     <span>Потрачено кредитов: {{ store.getCreditsSpent() }}</span>
     <br />
-    <span
-      >Запуск:
-      {{ store.getTimeToShutdown() == 0 ? "2 кредита" : "1 кредит" }}</span
-    >
     <br />
-    <h2 v-if="store.getTimeToShutdown() == 0" class="shutdown-msg">
-      БУР ОСТАНОВЛЕН!
-    </h2>
+    <div v-if="store.getTimeToShutdown() == 0">
+      <h2 class="shutdown-msg">БУР ОСТАНОВЛЕН!</h2>
+      <span><b>Запуск: 1 кредит</b></span>
+    </div>
     <div v-else>
-      <span>До остановки бура:</span>
+      <span><b>До остановки бура:</b></span>
       <br />
       <h2>{{ shutdownTime }}</h2>
     </div>
+    <br />
     <h3>Журнал:</h3>
     <div v-for="record in journal" :key="record">
       <span

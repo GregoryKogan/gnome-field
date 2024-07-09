@@ -86,8 +86,6 @@ export class Field {
       if (this.tiles[i].type == TileTypes.Bomb)
         this.bombs.push({ i: Math.floor(i / width), j: i % width });
     }
-
-    this.openEntrance();
   }
 
   static async fromCSV(width, height, csv_filename) {
@@ -468,6 +466,7 @@ export const useAppStore = defineStore("app", {
     timeToShutdown: 0,
     creditsSpent: 0,
     journal: [],
+    drillInitialized: false,
   }),
   actions: {
     async loadMap() {
@@ -498,7 +497,7 @@ export const useAppStore = defineStore("app", {
           type: this.field.get(i, j).type,
         });
 
-        this.countDownDate = new Date().getTime() + 60 * 1000;
+        this.countDownDate = new Date().getTime() + 60 * 1000 * 15;
         const interval = setInterval(() => {
           const now = new Date().getTime();
           this.timeToShutdown = this.countDownDate - now;
@@ -529,6 +528,20 @@ export const useAppStore = defineStore("app", {
     },
     getJournal() {
       return this.journal;
+    },
+    initDrill() {
+      if (this.drillInitialized) return;
+      this.countDownDate = new Date().getTime() + 60 * 1000 * 15;
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        this.timeToShutdown = this.countDownDate - now;
+        if (this.timeToShutdown < 0) {
+          clearInterval(interval);
+          this.timeToShutdown = 0;
+        }
+      }, 500);
+      this.drillInitialized = true;
+      this.field.openEntrance();
     },
   },
 });
