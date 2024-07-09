@@ -19,29 +19,54 @@ export default defineComponent({
   computed: {
     opacity() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
+      let opacity;
       switch (visibility) {
         case TileVisibility.Closed:
-          return 1;
+          opacity = 1;
+          break;
         case TileVisibility.Opened:
-          return 0;
+          opacity = 0;
+          break;
         case TileVisibility.Revealed:
-          return 0.5;
+          opacity = 0.5;
+          break;
         case TileVisibility.Scanned:
-          return 0.3;
+          opacity = 0.3;
+          break;
         default:
-          return 0;
+          opacity = 0;
       }
+
+      if (this.i == this.store.mouseI - 1 || this.j == this.store.mouseJ - 1)
+        opacity = Math.max(0.3, opacity);
+
+      return opacity;
     },
     color() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
       const availability = this.store.isAvailable(this.i, this.j);
-      if (visibility != TileVisibility.Scanned)
-        return availability ? "#277a33" : "#2a2a2a";
-      return availability ? "#ff00ff" : "#2e002e";
+
+      let color;
+      if (visibility == TileVisibility.Scanned)
+        color = availability ? "#ff00ff" : "#2e002e";
+      else color = availability ? "#277a33" : "#2a2a2a";
+
+      // Highlight the tile if it is adjacent to the mouse with a same color but brighter
+      if (this.i == this.store.mouseI - 1 || this.j == this.store.mouseJ - 1)
+        color = this.brighten(color, 0.1);
+
+      return color;
     },
     borderColor() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
-      return visibility == TileVisibility.Scanned ? "#ff00ff" : "#01ff12";
+      const color =
+        visibility == TileVisibility.Scanned ? "#ff00ff" : "#01ff12";
+      if (
+        (this.i == this.store.mouseI - 1 || this.j == this.store.mouseJ - 1) &&
+        visibility == TileVisibility.Opened
+      )
+        return "transparent";
+      return color;
     },
   },
   methods: {
@@ -51,6 +76,19 @@ export default defineComponent({
     mouseOver() {
       this.store.mouseI = this.i + 1;
       this.store.mouseJ = this.j + 1;
+    },
+    brighten(color, amount) {
+      const c = color.substring(1);
+      const rgb = parseInt(c, 16);
+      const r = (rgb >> 16) & 0xff;
+      const g = (rgb >> 8) & 0xff;
+      const b = (rgb >> 0) & 0xff;
+
+      const newR = Math.min(255, r + 255 * amount);
+      const newG = Math.min(255, g + 255 * amount);
+      const newB = Math.min(255, b + 255 * amount);
+
+      return `#${((newR << 16) | (newG << 8) | newB).toString(16)}`;
     },
   },
 });
