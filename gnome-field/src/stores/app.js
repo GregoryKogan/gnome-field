@@ -256,8 +256,6 @@ export class Field {
       this.handleMole(i, j);
 
     // Open adjacent revealed tiles
-    // if (current.type == TileTypes.Cliff || current.type == TileTypes.Water)
-    //   return;
     if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
       this.open(i - 1, j);
     if (
@@ -410,12 +408,38 @@ export class Field {
       this.tiles[exit_tile].isOpened()
     );
 
-    for (let exit_tile of portal.exit_tiles)
-      this.tiles[exit_tile].setVisibility(TileVisibility.Opened);
     for (let entrance_tile of portal.entrance_tiles)
       this.tiles[entrance_tile].setVisibility(TileVisibility.Opened);
 
     if (!exit_is_opened) this.splashHide(i, j);
+
+    for (let exit_tile of portal.exit_tiles)
+      this.tiles[exit_tile].setVisibility(TileVisibility.Opened);
+
+    for (let exit_tile of portal.exit_tiles) {
+      const [exit_i, exit_j] = this.index2d(exit_tile);
+      // Open adjacent revealed tiles
+      if (
+        exit_i > 0 &&
+        this.get(exit_i - 1, exit_j).visibility == TileVisibility.Revealed
+      )
+        this.open(exit_i - 1, exit_j);
+      if (
+        exit_i < this.height - 1 &&
+        this.get(exit_i + 1, exit_j).visibility == TileVisibility.Revealed
+      )
+        this.open(exit_i + 1, exit_j);
+      if (
+        j > 0 &&
+        this.get(exit_i, exit_j - 1).visibility == TileVisibility.Revealed
+      )
+        this.open(exit_i, exit_j - 1);
+      if (
+        j < this.width - 1 &&
+        this.get(exit_i, exit_j + 1).visibility == TileVisibility.Revealed
+      )
+        this.open(exit_i, exit_j + 1);
+    }
   }
 
   handlePortalExit(i, j) {
