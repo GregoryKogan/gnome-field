@@ -4,7 +4,7 @@
       <div
         style="
           position: relative;
-          width: max(calc(100% - 23.5rem), 50%);
+          width: max(calc(100% - 25rem), 50%);
           margin: auto;
         "
         :style="{
