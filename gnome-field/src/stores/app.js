@@ -501,6 +501,7 @@ export const useAppStore = defineStore("app", {
       this.field = await Field.fromJSON("/gnome-field/map.json");
     },
     tapTile(i, j) {
+      const oldTileType = this.field.get(i, j).type;
       const oldField = this.field.tiles.map((tile) => ({ ...tile }));
       this.field.open(i, j);
       this.field.updateAvailabilityMap();
@@ -520,7 +521,7 @@ export const useAppStore = defineStore("app", {
             second: "2-digit",
             hour12: false,
           }),
-          type: this.field.get(i, j).type,
+          type: oldTileType,
         });
 
         this.countDownDate = new Date().getTime() + 60 * 1000 * 15;
