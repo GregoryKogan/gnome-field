@@ -18,20 +18,19 @@ export default defineComponent({
   },
   computed: {
     opacity() {
-      return 0.2;
-      // const visibility = this.store.getTile(this.i, this.j).visibility;
-      // switch (visibility) {
-      //   case TileVisibility.Closed:
-      //     return 1;
-      //   case TileVisibility.Opened:
-      //     return 0;
-      //   case TileVisibility.Revealed:
-      //     return 0.5;
-      //   case TileVisibility.Scanned:
-      //     return 0.3;
-      //   default:
-      //     return 0;
-      // }
+      const visibility = this.store.getTile(this.i, this.j).visibility;
+      switch (visibility) {
+        case TileVisibility.Closed:
+          return 1;
+        case TileVisibility.Opened:
+          return 0;
+        case TileVisibility.Revealed:
+          return 0.5;
+        case TileVisibility.Scanned:
+          return 0.3;
+        default:
+          return 0;
+      }
     },
     color() {
       const visibility = this.store.getTile(this.i, this.j).visibility;

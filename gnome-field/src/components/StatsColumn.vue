@@ -38,8 +38,8 @@
     <h3>Журнал:</h3>
     <div v-for="record in journal" :key="record">
       <span
-        >{{ record.time }} ({{ record.tile.i }}, {{ record.tile.j }})
-        {{ getTypeName(record.type) }}</span
+        >{{ record.time }} ({{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[record.tile.i] }}
+        {{ record.tile.j + 1 }}) {{ getTypeName(record.type) }}</span
       >
       <br />
     </div>
