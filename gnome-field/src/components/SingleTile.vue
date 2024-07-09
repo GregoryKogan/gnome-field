@@ -1,5 +1,5 @@
 <template>
-  <div @click="tap" class="tile"></div>
+  <div @click="tap" @mouseover="mouseOver" class="tile"></div>
 </template>
 
 <script>
@@ -18,19 +18,20 @@ export default defineComponent({
   },
   computed: {
     opacity() {
-      const visibility = this.store.getTile(this.i, this.j).visibility;
-      switch (visibility) {
-        case TileVisibility.Closed:
-          return 1;
-        case TileVisibility.Opened:
-          return 0;
-        case TileVisibility.Revealed:
-          return 0.5;
-        case TileVisibility.Scanned:
-          return 0.3;
-        default:
-          return 0;
-      }
+      return 0.2;
+      // const visibility = this.store.getTile(this.i, this.j).visibility;
+      // switch (visibility) {
+      //   case TileVisibility.Closed:
+      //     return 1;
+      //   case TileVisibility.Opened:
+      //     return 0;
+      //   case TileVisibility.Revealed:
+      //     return 0.5;
+      //   case TileVisibility.Scanned:
+      //     return 0.3;
+      //   default:
+      //     return 0;
+      // }
     },
     color() {
       const visibility = this.store.getTile(this.i, this.j).visibility;
@@ -48,6 +49,10 @@ export default defineComponent({
     tap() {
       this.store.tapTile(this.i, this.j);
     },
+    mouseOver() {
+      this.store.mouseI = this.i + 1;
+      this.store.mouseJ = this.j + 1;
+    },
   },
 });
 </script>
@@ -59,5 +64,6 @@ export default defineComponent({
   aspect-ratio: 1;
   width: 100%;
   opacity: v-bind("opacity");
+  cursor: url("@/assets/cross.cur"), auto;
 }
 </style>

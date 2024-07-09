@@ -8,16 +8,22 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useAppStore } from "@/stores/app";
 
 export default defineComponent({
   name: "TileGrid",
   setup() {
-    return {};
+    const store = useAppStore();
+    return { store };
   },
-  data: () => ({
-    height: 24,
-    width: 32,
-  }),
+  computed: {
+    width() {
+      return this.store.getWidth();
+    },
+    height() {
+      return this.store.getHeight();
+    },
+  },
 });
 </script>
 
@@ -25,8 +31,7 @@ export default defineComponent({
 .tile-grid {
   width: 100%;
   display: grid;
-  aspect-ratio: 4/3;
-  grid-template-columns: repeat(32, calc(100% / v-bind("width")));
-  grid-template-rows: repeat(24, calc(100% / v-bind("height")));
+  grid-template-columns: repeat(v-bind("width"), calc(100% / v-bind("width")));
+  grid-template-rows: repeat(v-bind("height"), calc(100% / v-bind("height")));
 }
 </style>

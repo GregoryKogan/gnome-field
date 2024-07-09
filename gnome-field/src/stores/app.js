@@ -491,6 +491,8 @@ export const useAppStore = defineStore("app", {
     creditsSpent: 0,
     journal: [],
     drillInitialized: false,
+    mouseI: -1,
+    mouseJ: -1,
   }),
   actions: {
     async loadMap() {
@@ -531,6 +533,12 @@ export const useAppStore = defineStore("app", {
           }
         }, 500);
       }
+    },
+    getWidth() {
+      return this.field.width;
+    },
+    getHeight() {
+      return this.field.height;
     },
     getTile(i, j) {
       return this.field.get(i, j);

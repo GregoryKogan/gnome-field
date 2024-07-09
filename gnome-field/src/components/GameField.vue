@@ -1,12 +1,14 @@
 <template>
-  <img src="@/assets/map.png" style="aspect-ratio: 4/3; width: 100%" />
-  <ExplosionTile
-    v-for="bomb in store.getBombs()"
-    :key="bomb"
-    :i="bomb.i"
-    :j="bomb.j"
-  />
-  <TileGrid style="z-index: 10; position: absolute; top: 0; left: 0" />
+  <div>
+    <img src="@/assets/map.png" style="width: 100%" />
+    <ExplosionTile
+      v-for="bomb in store.getBombs()"
+      :key="bomb"
+      :i="bomb.i"
+      :j="bomb.j"
+    />
+    <TileGrid style="z-index: 10; position: absolute; top: 0; left: 0" />
+  </div>
 </template>
 
 <script>

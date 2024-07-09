@@ -4,13 +4,36 @@
       <div
         style="
           position: relative;
-          max-height: 100vh;
-          aspect-ratio: 4/3;
-          width: max(calc(100% - 22rem), 50%);
+          width: max(calc(100% - 23.5rem), 50%);
           margin: auto;
         "
+        :style="{
+          aspectRatio: (store.getWidth() + 2) / (store.getHeight() + 2),
+          display: `grid`,
+          gridTemplateColumns: `repeat(${store.getWidth() + 2}, calc(100% / ${
+            store.getWidth() + 2
+          }))`,
+          gridTemplateRows: `repeat(${store.getHeight() + 2}, calc(100% / ${
+            store.getHeight() + 2
+          }))`,
+        }"
       >
-        <GameField />
+        <div
+          v-for="i in (store.getWidth() + 2) * (store.getHeight() + 2)"
+          :key="i"
+        >
+          <BorderTile :index="i - 1" />
+        </div>
+        <div
+          style="position: absolute"
+          :style="{
+            width: `calc(100% / ${store.getWidth() + 2} * ${store.getWidth()})`,
+            top: `calc(100% / ${store.getHeight() + 2})`,
+            left: `calc(100% / ${store.getWidth() + 2})`,
+          }"
+        >
+          <GameField />
+        </div>
       </div>
       <div style="width: 22rem; padding: 1em; height: 100%">
         <StatsColumn />
