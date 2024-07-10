@@ -40,6 +40,7 @@
       </div>
     </v-row>
   </v-container>
+  <TargetDialog />
 </template>
 
 <script>

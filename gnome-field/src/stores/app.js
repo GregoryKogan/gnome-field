@@ -81,6 +81,7 @@ export class Field {
     this.portals = portals;
     this.bombs = [];
     this.availabilityMap = new Array(width * height).fill(false);
+    this.targetReached = false;
 
     for (let i = 0; i < width * height; i++) {
       if (this.tiles[i].type == TileTypes.Bomb)
@@ -254,6 +255,13 @@ export class Field {
       oldVisibility == TileVisibility.Closed
     )
       this.handleMole(i, j);
+
+    // Handle target tile
+    if (
+      this.tiles[this.index(i, j)].type == TileTypes.Target &&
+      oldVisibility == TileVisibility.Closed
+    )
+      this.targetReached = true;
 
     // Open adjacent revealed tiles
     if (i > 0 && this.get(i - 1, j).visibility == TileVisibility.Revealed)
@@ -493,6 +501,11 @@ export const useAppStore = defineStore("app", {
     drillInitialized: false,
     mouseI: -1,
     mouseJ: -1,
+    targetReached: false,
+    ventCountdownDate: null,
+    timeToVentOpen: 0,
+    showPrizeVideo: false,
+    finished: false,
   }),
   actions: {
     async loadMap() {
@@ -575,6 +588,39 @@ export const useAppStore = defineStore("app", {
       }, 500);
       this.drillInitialized = true;
       this.field.openEntrance();
+    },
+    targetReached() {
+      if (this.ventCountdownDate === null && this.field.targetReached) {
+        // this.ventCountdownDate = new Date().getTime() + 60 * 1000 * 15;
+        this.ventCountdownDate = new Date().getTime() + 10 * 1000;
+        const interval = setInterval(() => {
+          const now = new Date().getTime();
+          this.timeToVentOpen = this.ventCountdownDate - now;
+          if (this.timeToVentOpen < 0) {
+            clearInterval(interval);
+            this.timeToVentOpen = 0;
+            this.showPrizeVideo = true;
+          }
+        }, 500);
+      }
+      return this.field.targetReached;
+    },
+    getTimeToVentOpen() {
+      return this.timeToVentOpen;
+    },
+    getShowPrizeVideo() {
+      return this.showPrizeVideo;
+    },
+    setShowPrizeVideo(show) {
+      this.showPrizeVideo = show;
+    },
+    finishGame() {
+      this.setShowPrizeVideo(false);
+      this.field.targetReached = false;
+      this.finished = true;
+    },
+    getFinished() {
+      return this.finished;
     },
   },
 });
