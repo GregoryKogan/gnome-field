@@ -1,13 +1,20 @@
 <template>
   <v-dialog v-model="targetReached" width="auto" opacity="0">
     <v-card style="font-family: monospace; background-color: background">
-      <v-card-title v-if="!store.getShowPrizeVideo()"
-        ><h1>Сигнал обнаружен</h1></v-card-title
-      >
-      <v-card-text v-if="!store.getShowPrizeVideo()" style="text-align: center">
-        <h2>До взлома люка</h2>
-        <h1 style="font-size: 3em">{{ ventOpenTime }}</h1>
-      </v-card-text>
+      <div v-if="!store.getShowPrizeVideo()">
+        <v-card-title><h1>Сигнал обнаружен</h1></v-card-title>
+        <v-card-text style="text-align: center">
+          <h2>До взлома люка</h2>
+          <h1 style="font-size: 3em">{{ ventOpenTime }}</h1>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="store.fastForwardVent()">
+            <v-icon>mdi-arrow-right</v-icon>
+          </v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </div>
       <div v-if="store.getShowPrizeVideo()">
         <div style="height: 80vh; width: 80vw">
           <PrizeVideoPlayer />

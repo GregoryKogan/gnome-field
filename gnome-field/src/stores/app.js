@@ -591,8 +591,7 @@ export const useAppStore = defineStore("app", {
     },
     targetReached() {
       if (this.ventCountdownDate === null && this.field.targetReached) {
-        // this.ventCountdownDate = new Date().getTime() + 60 * 1000 * 15;
-        this.ventCountdownDate = new Date().getTime() + 10 * 1000;
+        this.ventCountdownDate = new Date().getTime() + 60 * 1000 * 15;
         const interval = setInterval(() => {
           const now = new Date().getTime();
           this.timeToVentOpen = this.ventCountdownDate - now;
@@ -621,6 +620,13 @@ export const useAppStore = defineStore("app", {
     },
     getFinished() {
       return this.finished;
+    },
+    fastForwardVent() {
+      const now = new Date().getTime();
+      const delta = this.ventCountdownDate - now;
+      if (delta > 1000) {
+        this.ventCountdownDate = now + 5000;
+      }
     },
   },
 });
