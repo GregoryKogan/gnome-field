@@ -1,6 +1,13 @@
 <template>
   <v-dialog v-model="targetReached" width="auto" opacity="0">
-    <v-card style="font-family: monospace; background-color: background">
+    <v-card
+      style="
+        font-family: monospace;
+        background-color: background;
+        border: solid 2px #00ff00;
+      "
+      elevation="24"
+    >
       <div v-if="!store.getShowPrizeVideo()">
         <v-card-title><h1>Сигнал обнаружен</h1></v-card-title>
         <v-card-text style="text-align: center">
