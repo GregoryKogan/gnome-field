@@ -526,6 +526,17 @@ export const useAppStore = defineStore("app", {
         if (this.timeToShutdown == 0) this.creditsSpent += 2;
         else this.creditsSpent += 1;
 
+        let journalMsg = null;
+        if (oldTileType == TileTypes.Bomb)
+          journalMsg = "Вы наткнулись на залежи подземного газа и взорвались!";
+        else if (oldTileType == TileTypes.PortalEntrance)
+          journalMsg = "Вы прошли через портал!";
+        else if (oldTileType == TileTypes.Mole)
+          journalMsg =
+            "Вы наткнулись на аномалию, просвечивающую область вокруг!";
+        else if (oldTileType == TileTypes.Target)
+          journalMsg = "Вы достигли цели!";
+
         this.journal.push({
           tile: { i, j },
           time: new Date().toLocaleTimeString("ru-RU", {
@@ -535,6 +546,7 @@ export const useAppStore = defineStore("app", {
             hour12: false,
           }),
           type: oldTileType,
+          msg: journalMsg,
         });
 
         this.countDownDate = new Date().getTime() + 60 * 1000 * 15;

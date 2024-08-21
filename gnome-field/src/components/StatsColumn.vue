@@ -42,6 +42,9 @@
         {{ record.tile.j + 1 }}) {{ getTypeName(record.type) }}</span
       >
       <br />
+      <span v-if="record.msg" style="font-size: 90%; font-weight: bold">{{
+        record.msg
+      }}</span>
     </div>
   </div>
 </template>
@@ -88,7 +91,7 @@ export default defineComponent({
         case TileTypes.Sand:
           return "песок";
         case TileTypes.Mole:
-          return "крот";
+          return "глаз";
         case TileTypes.PortalEntrance:
           return "портал (вход)";
         case TileTypes.Target:
