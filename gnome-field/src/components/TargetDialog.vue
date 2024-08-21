@@ -9,9 +9,9 @@
       elevation="24"
     >
       <div v-if="!store.getShowPrizeVideo()">
-        <v-card-title><h1>Сигнал обнаружен</h1></v-card-title>
+        <v-card-title><h1>Кристалл обнаружен</h1></v-card-title>
         <v-card-text style="text-align: center">
-          <h2>До взлома люка</h2>
+          <h2>До извлечения</h2>
           <h1 style="font-size: 3em">{{ ventOpenTime }}</h1>
         </v-card-text>
         <v-card-actions>
