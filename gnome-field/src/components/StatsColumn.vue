@@ -18,16 +18,16 @@
       >
       <br />
     </div>
-    <span>Цена бурения: 1 кредит</span>
+    <span>Цена бурения: 1 энерго-юнит</span>
     <br />
     <span>Пробурено кубов: {{ store.getSteps() }}</span>
     <br />
-    <span>Потрачено кредитов: {{ store.getCreditsSpent() }}</span>
+    <span>Потрачено энерго-юнитов: {{ store.getCreditsSpent() }}</span>
     <br />
     <br />
     <div v-if="store.getTimeToShutdown() == 0">
       <h2 class="shutdown-msg">БУР ОСТАНОВЛЕН!</h2>
-      <span><b>Запуск: 1 кредит</b></span>
+      <span><b>Запуск: 1 энерго-юнит</b></span>
     </div>
     <div v-else>
       <span><b>До остановки бура:</b></span>
