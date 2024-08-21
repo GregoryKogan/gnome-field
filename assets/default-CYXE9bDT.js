@@ -1,0 +1,1 @@
+import{o,av as r,aw as e,v as a,aH as n,aI as s,aJ as _}from"./index-B2cLUcEw.js";const f={__name:"default",setup(c){return(l,u)=>{const t=_("router-view");return o(),r(s,null,{default:e(()=>[a(n,null,{default:e(()=>[a(t)]),_:1})]),_:1})}}};export{f as default};
