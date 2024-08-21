@@ -34,7 +34,7 @@ export default defineComponent({
           this.opened = true;
           setTimeout(() => {
             this.opacity = 1;
-          }, 1000);
+          }, 3000);
         }
       }
     );
