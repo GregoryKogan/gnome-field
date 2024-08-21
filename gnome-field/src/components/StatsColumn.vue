@@ -14,7 +14,7 @@
       style="display: flex; justify-content: center; align-items: center"
     >
       <v-btn @click="store.initDrill()" variant="outlined" style="margin: 1em"
-        >за счёт фирмы!</v-btn
+        >запустить бур!</v-btn
       >
       <br />
     </div>
