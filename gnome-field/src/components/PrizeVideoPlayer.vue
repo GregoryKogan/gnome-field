@@ -1,10 +1,7 @@
 <template>
   <div class="video-wrapper" style="width: 100%; height: 100%">
-    <video
-      ref="videoPlayer"
-      class="video-js vjs-big-play-centered vjs-default-skin"
-      style="width: 100%; height: 100%"
-    ></video>
+    <video ref="videoPlayer" class="video-js vjs-big-play-centered vjs-default-skin"
+      style="width: 100%; height: 100%"></video>
   </div>
 </template>
 
@@ -55,6 +52,6 @@ export default defineComponent({
 
 <style scoped>
 .video-wrapper {
-  border: solid 3px #00f704;
+  border: solid 3px #f700ef;
 }
 </style>

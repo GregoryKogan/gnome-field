@@ -1,17 +1,16 @@
 <template>
   <v-dialog v-model="targetReached" width="auto" opacity="0">
-    <v-card
-      style="
+    <v-card style="
         font-family: monospace;
         background-color: background;
-        border: solid 2px #00ff00;
-      "
-      elevation="24"
-    >
+        border: solid 2px #ff00fb;
+      " elevation="24">
       <div v-if="!store.getShowPrizeVideo()">
-        <v-card-title><h1>Кристалл обнаружен</h1></v-card-title>
+        <v-card-title>
+          <h1>Машина обнаружена</h1>
+        </v-card-title>
         <v-card-text style="text-align: center">
-          <h2>До извлечения</h2>
+          <h2>До уничтожения</h2>
           <h1 style="font-size: 3em">{{ ventOpenTime }}</h1>
         </v-card-text>
         <v-card-actions>
@@ -28,7 +27,7 @@
         </div>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="store.finishGame(false)" color="#00ff00">
+          <v-btn @click="store.finishGame(false)" color="#ff00fb">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -56,9 +55,8 @@ export default defineComponent({
       const time = this.store.getTimeToVentOpen();
       const seconds = Math.floor(time / 1000) % 60;
       const minutes = Math.floor(time / 60000) % 60;
-      return `${minutes < 10 ? "0" : ""}${minutes}:${
-        seconds < 10 ? "0" : ""
-      }${seconds}`;
+      return `${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""
+        }${seconds}`;
     },
   },
 });

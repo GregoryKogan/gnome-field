@@ -120,7 +120,7 @@ export class Field {
       const data = await response.json();
       const tiles = data.tiles.map((tile) => {
         let newTile = new Tile(tile.type, tile.walls);
-        newTile.setVisibility(tile.visibility);
+        newTile.setVisibility(1);
         return newTile;
       });
       const portals = data.portals.map(
@@ -528,12 +528,12 @@ export const useAppStore = defineStore("app", {
 
         let journalMsg = null;
         if (oldTileType == TileTypes.Bomb)
-          journalMsg = "Вы наткнулись на залежи подземного газа и взорвались!";
+          journalMsg = "Вы наткнулись на просроченную агушу и взорвались!";
         else if (oldTileType == TileTypes.PortalEntrance)
-          journalMsg = "Вы прошли через портал!";
+          journalMsg = "Вы прошли через водоворот!";
         else if (oldTileType == TileTypes.Mole)
           journalMsg =
-            "Вы наткнулись на аномалию, просвечивающую область вокруг!";
+            "Вы наткнулись на мышку, показывающую область вокруг!";
         else if (oldTileType == TileTypes.Target)
           journalMsg = "Вы достигли цели!";
 

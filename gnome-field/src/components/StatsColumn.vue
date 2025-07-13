@@ -1,46 +1,37 @@
 <template>
-  <div
-    style="
-      border: 2px solid #01ff12;
+  <div style="
+      border: 2px solid #ff01ea;
       height: 93vh;
       padding: 1em;
       font-family: monospace;
       overflow: hidden;
-    "
-  >
-    <h1 @click="toggleFullscreen()">Данные бурения</h1>
-    <div
-      v-if="!store.drillInitialized"
-      style="display: flex; justify-content: center; align-items: center"
-    >
-      <v-btn @click="store.initDrill()" variant="outlined" style="margin: 1em"
-        >запустить бур!</v-btn
-      >
+    ">
+    <h1 @click="toggleFullscreen()">Данные сканера</h1>
+    <!-- <div v-if="!store.drillInitialized" style="display: flex; justify-content: center; align-items: center">
+      <v-btn @click="store.initDrill()" variant="outlined" style="margin: 1em">запустить бур!</v-btn>
       <br />
-    </div>
-    <span>Цена бурения: 1 энерго-юнит</span>
+    </div> -->
+    <span>Прогрызть клетку: 1 уголь</span>
     <br />
-    <span>Пробурено кубов: {{ store.getSteps() }}</span>
+    <span>Проедено клеток: {{ store.getSteps() }}</span>
     <br />
-    <span>Потрачено энерго-юнитов: {{ store.getCreditsSpent() }}</span>
+    <span>Потрачено угля: {{ store.getCreditsSpent() }}</span>
     <br />
     <br />
-    <div v-if="store.getTimeToShutdown() == 0">
-      <h2 class="shutdown-msg">БУР ОСТАНОВЛЕН!</h2>
+    <!-- <div v-if="store.getTimeToShutdown() == 0">
+      <h2 class="shutdown-msg">САША ГОЛОДЕН!</h2>
       <span><b>Запуск: 1 энерго-юнит</b></span>
     </div>
     <div v-else>
-      <span><b>До остановки бура:</b></span>
+      <span><b>До уплотнения среды:</b></span>
       <br />
       <h2>{{ shutdownTime }}</h2>
-    </div>
+    </div> -->
     <br />
     <h3>Журнал:</h3>
     <div v-for="record in journal" :key="record">
-      <span
-        >{{ record.time }} ({{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[record.tile.i] }}
-        {{ record.tile.j + 1 }}) {{ getTypeName(record.type) }}</span
-      >
+      <span>{{ record.time }} ({{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[record.tile.i] }}
+        {{ record.tile.j + 1 }}) {{ getTypeName(record.type) }}</span>
       <br />
       <span v-if="record.msg" style="font-size: 90%; font-weight: bold">{{
         record.msg
@@ -57,6 +48,7 @@ export default defineComponent({
   name: "StatsColumn",
   setup() {
     const store = useAppStore();
+    store.initDrill();
     return { store };
   },
   data: () => ({
@@ -67,9 +59,8 @@ export default defineComponent({
       const time = this.store.getTimeToShutdown();
       const seconds = Math.floor(time / 1000) % 60;
       const minutes = Math.floor(time / 60000) % 60;
-      return `${minutes < 10 ? "0" : ""}${minutes}:${
-        seconds < 10 ? "0" : ""
-      }${seconds}`;
+      return `${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""
+        }${seconds}`;
     },
     journal() {
       return [...this.store.getJournal()].reverse();
@@ -79,25 +70,25 @@ export default defineComponent({
     getTypeName(type) {
       switch (type) {
         case TileTypes.Water:
-          return "вода";
+          return "молоко";
         case TileTypes.Stone:
-          return "земля";
+          return "сыр";
         case TileTypes.Entrance:
           return "вход";
         case TileTypes.Cliff:
-          return "скала";
+          return "леденец";
         case TileTypes.Bomb:
-          return "бомба";
+          return "агуша";
         case TileTypes.Sand:
-          return "песок";
+          return "шоколад";
         case TileTypes.Mole:
-          return "глаз";
+          return "мышка";
         case TileTypes.PortalEntrance:
-          return "портал (вход)";
+          return "водоворот";
         case TileTypes.Target:
-          return "цель";
+          return "машина";
         case TileTypes.PortalExit:
-          return "портал (выход)";
+          return "слив";
         default:
           return "неизвестно";
       }
