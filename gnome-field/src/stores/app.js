@@ -549,7 +549,7 @@ export const useAppStore = defineStore("app", {
           msg: journalMsg,
         });
 
-        this.countDownDate = new Date().getTime() + 60 * 1000 * 15;
+        this.countDownDate = new Date().getTime() + 60 * 1000 * 150;
         const interval = setInterval(() => {
           const now = new Date().getTime();
           this.timeToShutdown = this.countDownDate - now;
@@ -589,7 +589,7 @@ export const useAppStore = defineStore("app", {
     },
     initDrill() {
       if (this.drillInitialized) return;
-      this.countDownDate = new Date().getTime() + 60 * 1000 * 15;
+      this.countDownDate = new Date().getTime() + 60 * 1000 * 150;
       const interval = setInterval(() => {
         const now = new Date().getTime();
         this.timeToShutdown = this.countDownDate - now;
